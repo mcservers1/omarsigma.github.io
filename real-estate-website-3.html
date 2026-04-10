@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example - Premium Real Estate & Cars</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #faf9f6;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --accent: #c9a961;
+            --accent-hover: #b39451;
+            --border: #e5e5e5;
+            --shadow: rgba(0, 0, 0, 0.08);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #a0a0a0;
+            --accent: #d4af67;
+            --accent-hover: #e5c078;
+            --border: #2a2a2a;
+            --shadow: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            border-bottom: 1px solid var(--border);
+            padding: 1.2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            background-color: rgba(250, 249, 246, 0.95);
+            transition: all 0.4s ease;
+        }
+
+        [data-theme="dark"] .navbar {
+            background-color: rgba(10, 10, 10, 0.95);
+        }
+
+        .navbar-left {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-link:hover { color: var(--accent); }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Black selects for language / city / country */
+        select {
+            background-color: #000000;
+            border: 1px solid #333;
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        select option {
+            background-color: #111111;
+            color: #ffffff;
+        }
+
+        select:hover { border-color: var(--accent); }
+        select:focus { outline: none; border-color: var(--accent); }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 50px; height: 26px;
+            background-color: var(--border);
+            border-radius: 50px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .theme-toggle:hover { background-color: var(--accent); }
+
+        .theme-toggle-ball {
+            width: 20px; height: 20px;
+            background-color: var(--bg-secondary);
+            border-radius: 50%;
+            position: absolute;
+            top: 3px; left: 3px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        [data-theme="dark"] .theme-toggle-ball { transform: translateX(24px); }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 80px;
+            padding: 4rem 4rem;
+            min-height: 100vh;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            letter-spacing: 1px;
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        /* Properties & Cars Grid */
+        .properties-grid, .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 6rem;
+        }
+
+        .property-card, .car-card {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+            animation: fadeIn 0.6s ease backwards;
+        }
+
+        .property-card:nth-child(1), .car-card:nth-child(1) { animation-delay: 0.1s; }
+        .property-card:nth-child(2), .car-card:nth-child(2) { animation-delay: 0.2s; }
+        .property-card:nth-child(3), .car-card:nth-child(3) { animation-delay: 0.3s; }
+        .property-card:nth-child(4), .car-card:nth-child(4) { animation-delay: 0.4s; }
+        .property-card:nth-child(5), .car-card:nth-child(5) { animation-delay: 0.5s; }
+        .property-card:nth-child(6), .car-card:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .property-card:hover, .car-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 30px var(--shadow);
+        }
+
+        /* Photo Carousel */
+        .photo-carousel {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+        }
+
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s ease;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .property-card:hover .carousel-slide img,
+        .car-card:hover .carousel-slide img {
+            transform: scale(1.05);
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.55);
+            color: #fff;
+            border: none;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease, transform 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .carousel-btn:hover {
+            background: rgba(201,169,97,0.85);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-btn.prev { left: 10px; }
+        .carousel-btn.next { right: 10px; }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 10;
+        }
+
+        .carousel-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .carousel-dot.active {
+            background: var(--accent);
+        }
+
+        /* Card info */
+        .property-info, .car-info {
+            padding: 1.8rem;
+        }
+
+        .property-price, .car-price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .property-title, .car-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .property-location, .car-location {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        .property-details, .car-details {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .property-detail, .car-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Cars section divider */
+        .section-divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 2rem 0 3rem;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background-color: var(--bg-secondary);
+            padding: 5rem 4rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin-top: 3rem;
+        }
+
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 400;
+        }
+
+        .contact-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-value:hover { color: var(--accent-hover); }
+
+        .no-properties {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .navbar { padding: 1rem 2rem; flex-direction: column; gap: 1rem; }
+            .navbar-left, .navbar-right { flex-direction: column; gap: 1rem; }
+            .main-content { padding: 2rem 2rem; }
+            .properties-grid, .cars-grid { grid-template-columns: 1fr; }
+            .section-title { font-size: 2rem; }
+            .contact-section { padding: 3rem 2rem; }
+            .contact-info { flex-direction: column; gap: 2rem; }
+            .contact-title { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="#" class="logo">EXAMPLE</a>
+            <a class="nav-link" onclick="scrollToContact()" data-translate="contact-link">Contact Us</a>
+        </div>
+        <div class="navbar-right">
+            <select id="countryFilter" onchange="updateCities()">
+                <option value="mauritania">Mauritania</option>
+            </select>
+            <select id="cityFilter" onchange="filterProperties()">
+                <option value="">All Cities</option>
+            </select>
+            <select id="languageSelector" onchange="changeLanguage()">
+                <option value="ar">العربية</option>
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+            </select>
+            <div class="theme-toggle" onclick="toggleTheme()">
+                <div class="theme-toggle-ball"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Properties Section -->
+        <h1 class="section-title" data-translate="title">Premium Properties</h1>
+        <p class="section-subtitle" data-translate="subtitle">Discover your dream home from our exclusive collection</p>
+
+        <div id="propertiesContainer" class="properties-grid">
+
+            <!-- Property 1 -->
+            <div class="property-card" data-country="mauritania" data-city="nouakchott">
+                <div class="photo-carousel" data-index="0">
+                    <div class="carousel-track">
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=600&fit=crop" alt="Villa 1"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop" alt="Villa 2"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop" alt="Villa 3"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop" alt="Villa 4"></div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="goToSlide(this,0)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,1)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,2)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,3)"></div>
+                    </div>
+                </div>
+                <div class="property-info">
+                    <div class="property-price">$450,000</div>
+                    <div class="property-title" data-translate="property1-title">Luxury Ocean View Villa</div>
+                    <div class="property-location" data-translate="property1-location">Nouakchott, Mauritania</div>
+                    <div class="property-details">
+                        <div class="property-detail">🛏️ <span data-translate="beds">4 Beds</span></div>
+                        <div class="property-detail">🛁 <span data-translate="baths">3 Baths</span></div>
+                        <div class="property-detail">📐 3,200 sq ft</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property 2 -->
+            <div class="property-card" data-country="mauritania" data-city="nouadhibou">
+                <div class="photo-carousel" data-index="0">
+                    <div class="carousel-track">
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop" alt="Apt 1"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&h=600&fit=crop" alt="Apt 2"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop" alt="Apt 3"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&h=600&fit=crop" alt="Apt 4"></div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="goToSlide(this,0)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,1)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,2)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,3)"></div>
+                    </div>
+                </div>
+                <div class="property-info">
+                    <div class="property-price">$280,000</div>
+                    <div class="property-title" data-translate="property2-title">Contemporary City Apartment</div>
+                    <div class="property-location" data-translate="property2-location">Nouadhibou, Mauritania</div>
+                    <div class="property-details">
+                        <div class="property-detail">🛏️ <span data-translate="beds">3 Beds</span></div>
+                        <div class="property-detail">🛁 <span data-translate="baths">2 Baths</span></div>
+                        <div class="property-detail">📐 1,800 sq ft</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property 3 -->
+            <div class="property-card" data-country="mauritania" data-city="kaedi">
+                <div class="photo-carousel" data-index="0">
+                    <div class="carousel-track">
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=800&h=600&fit=crop" alt="House 1"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=600&fit=crop" alt="House 2"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop" alt="House 3"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1598228723793-52759bba239c?w=800&h=600&fit=crop" alt="House 4"></div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="goToSlide(this,0)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,1)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,2)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,3)"></div>
+                    </div>
+                </div>
+                <div class="property-info">
+                    <div class="property-price">$320,000</div>
+                    <div class="property-title" data-translate="property3-title">Spacious Family Home</div>
+                    <div class="property-location" data-translate="property3-location">Kaédi, Mauritania</div>
+                    <div class="property-details">
+                        <div class="property-detail">🛏️ <span data-translate="beds">5 Beds</span></div>
+                        <div class="property-detail">🛁 <span data-translate="baths">4 Baths</span></div>
+                        <div class="property-detail">📐 4,500 sq ft</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property 4 -->
+            <div class="property-card" data-country="mauritania" data-city="nouakchott">
+                <div class="photo-carousel" data-index="0">
+                    <div class="carousel-track">
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop" alt="Lux 1"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&h=600&fit=crop" alt="Lux 2"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=800&h=600&fit=crop" alt="Lux 3"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1609347743398-9cff6960fd89?w=800&h=600&fit=crop" alt="Lux 4"></div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="goToSlide(this,0)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,1)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,2)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,3)"></div>
+                    </div>
+                </div>
+                <div class="property-info">
+                    <div class="property-price">$380,000</div>
+                    <div class="property-title" data-translate="property4-title">Modern Downtown Residence</div>
+                    <div class="property-location" data-translate="property4-location">Nouakchott, Mauritania</div>
+                    <div class="property-details">
+                        <div class="property-detail">🛏️ <span data-translate="beds">3 Beds</span></div>
+                        <div class="property-detail">🛁 <span data-translate="baths">2 Baths</span></div>
+                        <div class="property-detail">📐 2,100 sq ft</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property 5 -->
+            <div class="property-card" data-country="mauritania" data-city="rosso">
+                <div class="photo-carousel" data-index="0">
+                    <div class="carousel-track">
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&h=600&fit=crop" alt="River 1"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&h=600&fit=crop" alt="River 2"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=800&h=600&fit=crop" alt="River 3"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=800&h=600&fit=crop" alt="River 4"></div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="goToSlide(this,0)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,1)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,2)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,3)"></div>
+                    </div>
+                </div>
+                <div class="property-info">
+                    <div class="property-price">$250,000</div>
+                    <div class="property-title" data-translate="property5-title">Riverside Property</div>
+                    <div class="property-location" data-translate="property5-location">Rosso, Mauritania</div>
+                    <div class="property-details">
+                        <div class="property-detail">🛏️ <span data-translate="beds">4 Beds</span></div>
+                        <div class="property-detail">🛁 <span data-translate="baths">3 Baths</span></div>
+                        <div class="property-detail">📐 2,900 sq ft</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property 6 -->
+            <div class="property-card" data-country="mauritania" data-city="zouerate">
+                <div class="photo-carousel" data-index="0">
+                    <div class="carousel-track">
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop" alt="Desert 1"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1625602812206-5ec545ca1231?w=800&h=600&fit=crop" alt="Desert 2"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=800&h=600&fit=crop" alt="Desert 3"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop" alt="Desert 4"></div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="goToSlide(this,0)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,1)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,2)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,3)"></div>
+                    </div>
+                </div>
+                <div class="property-info">
+                    <div class="property-price">$420,000</div>
+                    <div class="property-title" data-translate="property6-title">Desert View Estate</div>
+                    <div class="property-location" data-translate="property6-location">Zouérate, Mauritania</div>
+                    <div class="property-details">
+                        <div class="property-detail">🛏️ <span data-translate="beds">5 Beds</span></div>
+                        <div class="property-detail">🛁 <span data-translate="baths">5 Baths</span></div>
+                        <div class="property-detail">📐 5,200 sq ft</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Cars Section -->
+        <hr class="section-divider">
+        <h2 class="section-title" data-translate="cars-title">Premium Cars</h2>
+        <p class="section-subtitle" data-translate="cars-subtitle">Explore our curated selection of luxury vehicles</p>
+
+        <div id="carsContainer" class="cars-grid">
+
+            <!-- Car 1 -->
+            <div class="car-card">
+                <div class="photo-carousel" data-index="0">
+                    <div class="carousel-track">
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&h=600&fit=crop" alt="Porsche 1"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&h=600&fit=crop" alt="Porsche 2"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=800&h=600&fit=crop" alt="Porsche 3"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1559416523-140ddc3d238c?w=800&h=600&fit=crop" alt="Porsche 4"></div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="goToSlide(this,0)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,1)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,2)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,3)"></div>
+                    </div>
+                </div>
+                <div class="car-info">
+                    <div class="car-price">$185,000</div>
+                    <div class="car-title" data-translate="car1-title">Porsche 911 Turbo S</div>
+                    <div class="car-location" data-translate="car1-location">Nouakchott, Mauritania</div>
+                    <div class="car-details">
+                        <div class="car-detail">⚡ <span>640 hp</span></div>
+                        <div class="car-detail">🏎️ <span>2023</span></div>
+                        <div class="car-detail">⛽ <span data-translate="car-petrol">Petrol</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Car 2 -->
+            <div class="car-card">
+                <div class="photo-carousel" data-index="0">
+                    <div class="carousel-track">
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&h=600&fit=crop" alt="BMW 1"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1556189250-72ba954cfc2b?w=800&h=600&fit=crop" alt="BMW 2"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1520031441872-265e4ff70366?w=800&h=600&fit=crop" alt="BMW 3"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1571127236794-81c0bbfe1ce3?w=800&h=600&fit=crop" alt="BMW 4"></div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="goToSlide(this,0)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,1)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,2)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,3)"></div>
+                    </div>
+                </div>
+                <div class="car-info">
+                    <div class="car-price">$95,000</div>
+                    <div class="car-title" data-translate="car2-title">BMW M5 Competition</div>
+                    <div class="car-location" data-translate="car2-location">Nouadhibou, Mauritania</div>
+                    <div class="car-details">
+                        <div class="car-detail">⚡ <span>617 hp</span></div>
+                        <div class="car-detail">🏎️ <span>2022</span></div>
+                        <div class="car-detail">⛽ <span data-translate="car-petrol">Petrol</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Car 3 -->
+            <div class="car-card">
+                <div class="photo-carousel" data-index="0">
+                    <div class="carousel-track">
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&h=600&fit=crop" alt="Mercedes 1"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&h=600&fit=crop" alt="Mercedes 2"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&h=600&fit=crop" alt="Mercedes 3"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800&h=600&fit=crop" alt="Mercedes 4"></div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="goToSlide(this,0)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,1)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,2)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,3)"></div>
+                    </div>
+                </div>
+                <div class="car-info">
+                    <div class="car-price">$210,000</div>
+                    <div class="car-title" data-translate="car3-title">Mercedes-AMG G63</div>
+                    <div class="car-location" data-translate="car3-location">Nouakchott, Mauritania</div>
+                    <div class="car-details">
+                        <div class="car-detail">⚡ <span>577 hp</span></div>
+                        <div class="car-detail">🏎️ <span>2024</span></div>
+                        <div class="car-detail">⛽ <span data-translate="car-petrol">Petrol</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Car 4 -->
+            <div class="car-card">
+                <div class="photo-carousel" data-index="0">
+                    <div class="carousel-track">
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=800&h=600&fit=crop" alt="Tesla 1"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=800&h=600&fit=crop" alt="Tesla 2"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?w=800&h=600&fit=crop" alt="Tesla 3"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&h=600&fit=crop" alt="Tesla 4"></div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="goToSlide(this,0)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,1)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,2)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,3)"></div>
+                    </div>
+                </div>
+                <div class="car-info">
+                    <div class="car-price">$89,000</div>
+                    <div class="car-title" data-translate="car4-title">Tesla Model S Plaid</div>
+                    <div class="car-location" data-translate="car4-location">Kaédi, Mauritania</div>
+                    <div class="car-details">
+                        <div class="car-detail">⚡ <span>1020 hp</span></div>
+                        <div class="car-detail">🏎️ <span>2023</span></div>
+                        <div class="car-detail">🔋 <span data-translate="car-electric">Electric</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Car 5 -->
+            <div class="car-card">
+                <div class="photo-carousel" data-index="0">
+                    <div class="carousel-track">
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1526726538690-5cbf956ae2fd?w=800&h=600&fit=crop" alt="Range Rover 1"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&h=600&fit=crop" alt="Range Rover 2"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=800&h=600&fit=crop" alt="Range Rover 3"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop" alt="Range Rover 4"></div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="goToSlide(this,0)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,1)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,2)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,3)"></div>
+                    </div>
+                </div>
+                <div class="car-info">
+                    <div class="car-price">$155,000</div>
+                    <div class="car-title" data-translate="car5-title">Range Rover Autobiography</div>
+                    <div class="car-location" data-translate="car5-location">Rosso, Mauritania</div>
+                    <div class="car-details">
+                        <div class="car-detail">⚡ <span>523 hp</span></div>
+                        <div class="car-detail">🏎️ <span>2024</span></div>
+                        <div class="car-detail">⛽ <span data-translate="car-petrol">Petrol</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Car 6 -->
+            <div class="car-card">
+                <div class="photo-carousel" data-index="0">
+                    <div class="carousel-track">
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?w=800&h=600&fit=crop" alt="Lamborghini 1"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=800&h=600&fit=crop" alt="Lamborghini 2"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=800&h=600&fit=crop" alt="Lamborghini 3"></div>
+                        <div class="carousel-slide"><img src="https://images.unsplash.com/photo-1567818735868-e71b99932e29?w=800&h=600&fit=crop" alt="Lamborghini 4"></div>
+                    </div>
+                    <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                    <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="goToSlide(this,0)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,1)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,2)"></div>
+                        <div class="carousel-dot" onclick="goToSlide(this,3)"></div>
+                    </div>
+                </div>
+                <div class="car-info">
+                    <div class="car-price">$320,000</div>
+                    <div class="car-title" data-translate="car6-title">Lamborghini Huracán EVO</div>
+                    <div class="car-location" data-translate="car6-location">Zouérate, Mauritania</div>
+                    <div class="car-details">
+                        <div class="car-detail">⚡ <span>631 hp</span></div>
+                        <div class="car-detail">🏎️ <span>2023</span></div>
+                        <div class="car-detail">⛽ <span data-translate="car-petrol">Petrol</span></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="contact-container">
+            <h2 class="contact-title" data-translate="contact-title">Get In Touch</h2>
+            <p class="section-subtitle" data-translate="contact-subtitle">We're here to help you find your perfect property or car</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-label" data-translate="phone-label">Phone</div>
+                    <a href="tel:+222123456789" class="contact-value">+222 12 34 56 789</a>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-label" data-translate="email-label">Email</div>
+                    <a href="/cdn-cgi/l/email-protection#34575b5a4055574074514c55594458511a575b59" class="contact-value"><span class="__cf_email__" data-cfemail="98fbf7f6ecf9fbecd8fde0f9f5e8f4fdb6fbf7f5">[email&#160;protected]</span></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // ─── Carousel Logic ───────────────────────────────────────────────────
+        function getCarousel(btn) {
+            return btn.closest('.photo-carousel');
+        }
+
+        function changeSlide(btn, dir) {
+            const carousel = getCarousel(btn);
+            const track = carousel.querySelector('.carousel-track');
+            const slides = carousel.querySelectorAll('.carousel-slide');
+            const dots = carousel.querySelectorAll('.carousel-dot');
+            let idx = parseInt(carousel.dataset.index);
+            idx = (idx + dir + slides.length) % slides.length;
+            carousel.dataset.index = idx;
+            track.style.transform = `translateX(-${idx * 100}%)`;
+            dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        }
+
+        function goToSlide(dot, idx) {
+            const carousel = dot.closest('.photo-carousel');
+            const track = carousel.querySelector('.carousel-track');
+            const dots = carousel.querySelectorAll('.carousel-dot');
+            carousel.dataset.index = idx;
+            track.style.transform = `translateX(-${idx * 100}%)`;
+            dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+        }
+
+        // ─── Translations ─────────────────────────────────────────────────────
+        const translations = {
+            ar: {
+                'contact-link': 'اتصل بنا',
+                'title': 'عقارات متميزة',
+                'subtitle': 'اكتشف منزل أحلامك من مجموعتنا الحصرية',
+                'cars-title': 'سيارات فاخرة',
+                'cars-subtitle': 'استكشف مجموعتنا المختارة من السيارات الفاخرة',
+                'property1-title': 'فيلا فاخرة بإطلالة على المحيط',
+                'property1-location': 'نواكشوط، موريتانيا',
+                'property2-title': 'شقة عصرية في المدينة',
+                'property2-location': 'نواذيبو، موريتانيا',
+                'property3-title': 'منزل عائلي واسع',
+                'property3-location': 'كايدي، موريتانيا',
+                'property4-title': 'مسكن حديث وسط المدينة',
+                'property4-location': 'نواكشوط، موريتانيا',
+                'property5-title': 'عقار على ضفة النهر',
+                'property5-location': 'روصو، موريتانيا',
+                'property6-title': 'عقار بإطلالة على الصحراء',
+                'property6-location': 'زويرات، موريتانيا',
+                'car1-title': 'بورش 911 توربو S',
+                'car1-location': 'نواكشوط، موريتانيا',
+                'car2-title': 'بي إم دبليو M5 كومبيتيشن',
+                'car2-location': 'نواذيبو، موريتانيا',
+                'car3-title': 'مرسيدس AMG G63',
+                'car3-location': 'نواكشوط، موريتانيا',
+                'car4-title': 'تيسلا موديل S بلايد',
+                'car4-location': 'كايدي، موريتانيا',
+                'car5-title': 'رنج روفر أوتوبيوغرافي',
+                'car5-location': 'روصو، موريتانيا',
+                'car6-title': 'لامبورغيني هوراكان EVO',
+                'car6-location': 'زويرات، موريتانيا',
+                'car-petrol': 'بنزين',
+                'car-electric': 'كهربائي',
+                'beds': 'غرف نوم',
+                'baths': 'حمامات',
+                'contact-title': 'تواصل معنا',
+                'contact-subtitle': 'نحن هنا لمساعدتك في العثور على العقار أو السيارة المثالية',
+                'phone-label': 'الهاتف',
+                'email-label': 'البريد الإلكتروني'
+            },
+            en: {
+                'contact-link': 'Contact Us',
+                'title': 'Premium Properties',
+                'subtitle': 'Discover your dream home from our exclusive collection',
+                'cars-title': 'Premium Cars',
+                'cars-subtitle': 'Explore our curated selection of luxury vehicles',
+                'property1-title': 'Luxury Ocean View Villa',
+                'property1-location': 'Nouakchott, Mauritania',
+                'property2-title': 'Contemporary City Apartment',
+                'property2-location': 'Nouadhibou, Mauritania',
+                'property3-title': 'Spacious Family Home',
+                'property3-location': 'Kaédi, Mauritania',
+                'property4-title': 'Modern Downtown Residence',
+                'property4-location': 'Nouakchott, Mauritania',
+                'property5-title': 'Riverside Property',
+                'property5-location': 'Rosso, Mauritania',
+                'property6-title': 'Desert View Estate',
+                'property6-location': 'Zouérate, Mauritania',
+                'car1-title': 'Porsche 911 Turbo S',
+                'car1-location': 'Nouakchott, Mauritania',
+                'car2-title': 'BMW M5 Competition',
+                'car2-location': 'Nouadhibou, Mauritania',
+                'car3-title': 'Mercedes-AMG G63',
+                'car3-location': 'Nouakchott, Mauritania',
+                'car4-title': 'Tesla Model S Plaid',
+                'car4-location': 'Kaédi, Mauritania',
+                'car5-title': 'Range Rover Autobiography',
+                'car5-location': 'Rosso, Mauritania',
+                'car6-title': 'Lamborghini Huracán EVO',
+                'car6-location': 'Zouérate, Mauritania',
+                'car-petrol': 'Petrol',
+                'car-electric': 'Electric',
+                'beds': 'Beds',
+                'baths': 'Baths',
+                'contact-title': 'Get In Touch',
+                'contact-subtitle': "We're here to help you find your perfect property or car",
+                'phone-label': 'Phone',
+                'email-label': 'Email'
+            },
+            fr: {
+                'contact-link': 'Contactez-nous',
+                'title': 'Propriétés Premium',
+                'subtitle': 'Découvrez la maison de vos rêves dans notre collection exclusive',
+                'cars-title': 'Voitures Premium',
+                'cars-subtitle': 'Explorez notre sélection de véhicules de luxe',
+                'property1-title': 'Villa de Luxe avec Vue sur l\'Océan',
+                'property1-location': 'Nouakchott, Mauritanie',
+                'property2-title': 'Appartement Contemporain en Ville',
+                'property2-location': 'Nouadhibou, Mauritanie',
+                'property3-title': 'Maison Familiale Spacieuse',
+                'property3-location': 'Kaédi, Mauritanie',
+                'property4-title': 'Résidence Moderne Centre-Ville',
+                'property4-location': 'Nouakchott, Mauritanie',
+                'property5-title': 'Propriété au Bord de la Rivière',
+                'property5-location': 'Rosso, Mauritanie',
+                'property6-title': 'Domaine avec Vue sur le Désert',
+                'property6-location': 'Zouérate, Mauritanie',
+                'car1-title': 'Porsche 911 Turbo S',
+                'car1-location': 'Nouakchott, Mauritanie',
+                'car2-title': 'BMW M5 Compétition',
+                'car2-location': 'Nouadhibou, Mauritanie',
+                'car3-title': 'Mercedes-AMG G63',
+                'car3-location': 'Nouakchott, Mauritanie',
+                'car4-title': 'Tesla Model S Plaid',
+                'car4-location': 'Kaédi, Mauritanie',
+                'car5-title': 'Range Rover Autobiography',
+                'car5-location': 'Rosso, Mauritanie',
+                'car6-title': 'Lamborghini Huracán EVO',
+                'car6-location': 'Zouérate, Mauritanie',
+                'car-petrol': 'Essence',
+                'car-electric': 'Électrique',
+                'beds': 'Chambres',
+                'baths': 'Salles de bain',
+                'contact-title': 'Contactez-nous',
+                'contact-subtitle': 'Nous sommes là pour vous aider à trouver votre propriété ou voiture idéale',
+                'phone-label': 'Téléphone',
+                'email-label': 'Email'
+            }
+        };
+
+        const citiesData = {
+            mauritania: [
+                { value: '', label: { ar: 'كل المدن', en: 'All Cities', fr: 'Toutes les villes' } },
+                { value: 'nouakchott', label: { ar: 'نواكشوط', en: 'Nouakchott', fr: 'Nouakchott' } },
+                { value: 'nouadhibou', label: { ar: 'نواذيبو', en: 'Nouadhibou', fr: 'Nouadhibou' } },
+                { value: 'kaedi', label: { ar: 'كايدي', en: 'Kaédi', fr: 'Kaédi' } },
+                { value: 'rosso', label: { ar: 'روصو', en: 'Rosso', fr: 'Rosso' } },
+                { value: 'zouerate', label: { ar: 'زويرات', en: 'Zouérate', fr: 'Zouérate' } }
+            ]
+        };
+
+        // ─── Theme: apply before paint to avoid flash ───────────────
+        (function() {
+            document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
+        })();
+
+        let currentLanguage = localStorage.getItem('language') || 'ar';
+
+        // ─── Dynamic listings from Admin Panel ──────────────────────
+        const STORAGE_KEY = 'example_listings';
+
+        // Store number values separately so translation never loses them
+        // Each beds/baths span stores its number in data-num
+        const fuelLabels = {
+            petrol:   { ar: 'بنزين',    en: 'Petrol',    fr: 'Essence'   },
+            electric: { ar: 'كهربائي',  en: 'Electric',  fr: 'Électrique'},
+            diesel:   { ar: 'ديزل',     en: 'Diesel',    fr: 'Diesel'    },
+            hybrid:   { ar: 'هجين',     en: 'Hybrid',    fr: 'Hybride'   },
+        };
+
+        function buildCarousel(photos) {
+            const slides = photos.map(url =>
+                `<div class="carousel-slide"><img src="${url}" alt="photo" loading="lazy"></div>`
+            ).join('');
+            const dots = photos.map((_,i) =>
+                `<div class="carousel-dot${i===0?' active':''}" onclick="goToSlide(this,${i})"></div>`
+            ).join('');
+            return `<div class="photo-carousel" data-index="0">
+                <div class="carousel-track">${slides}</div>
+                <button class="carousel-btn prev" onclick="event.stopPropagation();changeSlide(this,-1)">&#8249;</button>
+                <button class="carousel-btn next" onclick="event.stopPropagation();changeSlide(this,1)">&#8250;</button>
+                <div class="carousel-dots">${dots}</div>
+            </div>`;
+        }
+
+        function getLang(l, prefix) {
+            // Returns the value for the current language, falling back to EN then AR
+            const lang = currentLanguage;
+            return l[prefix + (lang==='ar'?'Ar':lang==='fr'?'Fr':'En')] ||
+                   l[prefix + 'En'] || l[prefix + 'Ar'] || '';
+        }
+
+        function buildPropertyCard(l) {
+            const photos = l.photos && l.photos.length ? l.photos : ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop'];
+            const title = getLang(l, 'title');
+            const loc   = getLang(l, 'loc');
+            const bedsLabel  = translations[currentLanguage]?.beds  || 'Beds';
+            const bathsLabel = translations[currentLanguage]?.baths || 'Baths';
+            return `<div class="property-card dynamic-listing" data-country="mauritania" data-city="${l.city||''}" data-id="${l.id}">
+                ${buildCarousel(photos)}
+                <div class="property-info">
+                    <div class="property-price">${l.price || ''}</div>
+                    <div class="property-title dynamic-title"
+                        data-title-ar="${encodeURIComponent(l.titleAr||'')}"
+                        data-title-en="${encodeURIComponent(l.titleEn||'')}"
+                        data-title-fr="${encodeURIComponent(l.titleFr||'')}">${title}</div>
+                    <div class="property-location dynamic-loc"
+                        data-loc-ar="${encodeURIComponent(l.locAr||'')}"
+                        data-loc-en="${encodeURIComponent(l.locEn||'')}"
+                        data-loc-fr="${encodeURIComponent(l.locFr||'')}">${loc}</div>
+                    <div class="property-details">
+                        ${l.beds  ? `<div class="property-detail">🛏️ <span class="dyn-stat" data-num="${l.beds}" data-label="beds">${l.beds} ${bedsLabel}</span></div>` : ''}
+                        ${l.baths ? `<div class="property-detail">🛁 <span class="dyn-stat" data-num="${l.baths}" data-label="baths">${l.baths} ${bathsLabel}</span></div>` : ''}
+                        ${l.area  ? `<div class="property-detail">📐 ${l.area}</div>` : ''}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function buildCarCard(l) {
+            const photos = l.photos && l.photos.length ? l.photos : ['https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&h=600&fit=crop'];
+            const title  = getLang(l, 'title');
+            const loc    = getLang(l, 'loc');
+            const fuelKey = l.fuel || 'petrol';
+            const fuelLabel = fuelLabels[fuelKey]?.[currentLanguage] || l.fuel || '';
+            return `<div class="car-card dynamic-listing" data-id="${l.id}">
+                ${buildCarousel(photos)}
+                <div class="car-info">
+                    <div class="car-price">${l.price || ''}</div>
+                    <div class="car-title dynamic-title"
+                        data-title-ar="${encodeURIComponent(l.titleAr||'')}"
+                        data-title-en="${encodeURIComponent(l.titleEn||'')}"
+                        data-title-fr="${encodeURIComponent(l.titleFr||'')}">${title}</div>
+                    <div class="car-location dynamic-loc"
+                        data-loc-ar="${encodeURIComponent(l.locAr||'')}"
+                        data-loc-en="${encodeURIComponent(l.locEn||'')}"
+                        data-loc-fr="${encodeURIComponent(l.locFr||'')}">${loc}</div>
+                    <div class="car-details">
+                        ${l.hp   ? `<div class="car-detail">⚡ <span>${l.hp}</span></div>` : ''}
+                        ${l.year ? `<div class="car-detail">🏎️ <span>${l.year}</span></div>` : ''}
+                        <div class="car-detail"><span class="dyn-fuel" data-fuelkey="${fuelKey}">${fuelLabel}</span></div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        function renderDynamicListings() {
+            document.querySelectorAll('.dynamic-listing').forEach(el => el.remove());
+            let listings = [];
+            try { listings = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch {}
+            if (!listings.length) return;
+            const propContainer = document.getElementById('propertiesContainer');
+            const carContainer  = document.getElementById('carsContainer');
+            listings.forEach(l => {
+                if (l.type === 'property') {
+                    propContainer.insertAdjacentHTML('beforeend', buildPropertyCard(l));
+                } else if (l.type === 'car') {
+                    carContainer.insertAdjacentHTML('beforeend', buildCarCard(l));
+                }
+            });
+        }
+
+        function updateDynamicTranslations(lang) {
+            // Titles — data-title-ar becomes dataset.titleAr (browser camelCase conversion)
+            document.querySelectorAll('.dynamic-title').forEach(el => {
+                const ck = lang === 'ar' ? 'titleAr' : lang === 'fr' ? 'titleFr' : 'titleEn';
+                const v = decodeURIComponent(el.dataset[ck] || '') || decodeURIComponent(el.dataset.titleEn || '');
+                if (v) el.textContent = v;
+            });
+            // Locations
+            document.querySelectorAll('.dynamic-loc').forEach(el => {
+                const ck = lang === 'ar' ? 'locAr' : lang === 'fr' ? 'locFr' : 'locEn';
+                const fallback = decodeURIComponent(el.dataset.locEn || '');
+                const v = decodeURIComponent(el.dataset[ck] || '') || fallback;
+                if (v) el.textContent = v;
+            });
+            // Beds/baths labels (number stored safely in data-num)
+            document.querySelectorAll('.dyn-stat').forEach(el => {
+                const num   = el.dataset.num || '';
+                const label = el.dataset.label; // 'beds' or 'baths'
+                const word  = translations[lang]?.[label] || label;
+                el.textContent = num + ' ' + word;
+            });
+            // Fuel
+            document.querySelectorAll('.dyn-fuel').forEach(el => {
+                const fk = el.dataset.fuelkey || 'petrol';
+                el.textContent = fuelLabels[fk]?.[lang] || fk;
+            });
+        }
+        // ─────────────────────────────────────────────────────────────
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderDynamicListings();
+            document.getElementById('languageSelector').value = currentLanguage;
+            applyTranslations(currentLanguage);
+            // updateCities is called inside applyTranslations, no need to call again
+        });
+
+        function applyTranslations(lang) {
+            // Fix: store number in data-num on static beds/baths spans on first run
+            document.querySelectorAll('[data-translate]').forEach(el => {
+                const key = el.getAttribute('data-translate');
+                if (!translations[lang]?.[key]) return;
+
+                if (el.tagName === 'SPAN') {
+                    // Store the numeric part once in data-num, then always read from there
+                    if (!el.dataset.num) {
+                        const num = el.textContent.match(/\d+/);
+                        if (num) el.dataset.num = num[0];
+                    }
+                    const num = el.dataset.num;
+                    el.textContent = num ? num + ' ' + translations[lang][key] : translations[lang][key];
+                } else {
+                    el.textContent = translations[lang][key];
+                }
+            });
+            document.body.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+            updateDynamicTranslations(lang);
+            updateCities(false); // false = don't trigger filterProperties from here (it runs after)
+        }
+
+        function changeLanguage() {
+            currentLanguage = document.getElementById('languageSelector').value;
+            localStorage.setItem('language', currentLanguage);
+            applyTranslations(currentLanguage);
+        }
+
+        function updateCities(runFilter = true) {
+            const country = document.getElementById('countryFilter').value || 'mauritania';
+            const citySelect = document.getElementById('cityFilter');
+            const cities = citiesData[country] || citiesData.mauritania;
+            citySelect.innerHTML = '';
+            cities.forEach(city => {
+                const opt = document.createElement('option');
+                opt.value = city.value;
+                opt.textContent = city.label[currentLanguage] || city.label.en;
+                citySelect.appendChild(opt);
+            });
+            if (runFilter) filterProperties();
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const newTheme = (html.getAttribute('data-theme') || 'light') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function filterProperties() {
+            const city = document.getElementById('cityFilter').value.toLowerCase();
+            const properties = document.querySelectorAll('#propertiesContainer .property-card');
+            let visible = 0;
+            properties.forEach(p => {
+                const match = !city || p.getAttribute('data-city') === city;
+                p.style.display = match ? 'block' : 'none';
+                if (match) visible++;
+            });
+            const container = document.getElementById('propertiesContainer');
+            // Remove stale message first, always
+            container.querySelectorAll('.no-properties').forEach(m => m.remove());
+            if (visible === 0) {
+                const msgs = {
+                    ar: 'لا توجد عقارات تطابق المعايير المحددة.',
+                    en: 'No properties match your filters.',
+                    fr: 'Aucune propriété ne correspond à vos filtres.'
+                };
+                const msg = document.createElement('div');
+                msg.className = 'no-properties';
+                msg.textContent = msgs[currentLanguage] || msgs.en;
+                container.appendChild(msg);
+            }
+        }
+
+        function scrollToContact() {
+            document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // dataset keys are camelCase from hyphenated data attributes —
+        // data-title-ar becomes dataset.titleAr automatically in the DOM.
+        // The dynamic translation function above already uses camelCase correctly.
+    </script>
+</body>
+</html>
